@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <script src='vendor/three.js/build/three.min.js'></script>
-
 <script src='../threex.dilategeometry.js'></script>
 <script src='../threex.atmospherematerial.js'></script>
-<script src="../threex.geometricglowmesh.js"></script>
-<!-- include for threex.atmospherematerialdatgui -->
+<!-- include for threex.glowdatgui -->
 <script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
 <script src="../threex.atmospherematerialdatgui.js"></script>
-
 
 <body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
 	var renderer	= new THREE.WebGLRenderer();
@@ -19,43 +16,36 @@
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100 );
 	camera.position.z = 3;
 
-
 	//////////////////////////////////////////////////////////////////////////////////
-	//		add an object and make it move					//
-	/////////////////////////////////////////////////////////////////////////////////
+	//		build original object						//
+	//////////////////////////////////////////////////////////////////////////////////
 
 	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32);
-	var material	= new THREE.MeshBasicMaterial({
-		color	: new THREE.Color('gray')
-	})
+	geometry.computeVertexNormals();
+	var material	= new THREE.MeshNormalMaterial();
 	var mesh	= new THREE.Mesh( geometry, material );
 	// mesh.visible	= false
 	scene.add( mesh );
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
+	//		put the hallo around						//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	// create a glowMesh
-	var glowMesh	= new THREEx.GeometricGlowMesh(mesh)
-	mesh.add(glowMesh.object3d)
+	// create the mesh for the halo with AtmosphereMaterial
+	var geometry	= mesh.geometry.clone()
+	THREEx.dilateGeometry(geometry, 0.05)
+	var material	= THREEx.createAtmosphereMaterial()
+	var meshHalo	= new THREE.Mesh(geometry, material );
+	scene.add( meshHalo );
 
-	// example of customization of the default glowMesh
-	// glowMesh.insideMesh.material.uniforms.glowColor.value
-	// var insideUniforms	= glowMesh.insideMesh.material.uniforms
-	// insideUniforms.glowColor.value.set('hotpink')
-	// var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
-	// outsideUniforms.glowColor.value.set('hotpink')
+	// possible customisation of AtmosphereMaterial
+	material.uniforms.glowColor.value	= new THREE.Color('cyan')
+	material.uniforms.coeficient.value	= 1.1
+	material.uniforms.power.value		= 0.7
 
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-	
-	// setup a datGUI for it
+	// here is how to setup a datGUI for fine tuning
 	var datGUI	= new dat.GUI()
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
-
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//
@@ -66,8 +56,8 @@
 		mouse.y	= (event.clientY / window.innerHeight) - 0.5
 	}, false)
 	updateFcts.push(function(delta, now){
-		camera.position.x += (mouse.x*5 - camera.position.x) * (delta*3)
-		camera.position.y += (mouse.y*5 - camera.position.y) * (delta*3)
+		camera.position.x += (mouse.x*25 - camera.position.x) * (delta*3)
+		camera.position.y += (mouse.y*25 - camera.position.y) * (delta*3)
 		camera.lookAt( scene.position )
 	})
 

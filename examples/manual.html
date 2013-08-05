@@ -4,7 +4,7 @@
 <script src='../threex.atmospherematerial.js'></script>
 <!-- include for threex.glowdatgui -->
 <script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
-<script src="../threex.atmospheredatgui.js"></script>
+<script src="../threex.atmospherematerialdatgui.js"></script>
 
 <body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
 	var renderer	= new THREE.WebGLRenderer();
@@ -44,7 +44,7 @@
 	var meshGlowIn	= new THREE.Mesh(geometry, material );
 	scene.add( meshGlowIn );
 
-	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)	
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
 	var geometry	= mesh.geometry.clone()
 	// THREEx.dilateGeometry(geometry, 0.1)
@@ -57,7 +57,7 @@
 	meshGlowOut.scale.multiplyScalar(1.2)
 	scene.add( meshGlowOut );
 
-	// new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//

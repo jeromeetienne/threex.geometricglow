@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <script src='vendor/three.js/build/three.min.js'></script>
-
 <script src='../threex.dilategeometry.js'></script>
-<script src='../threex.atmospherematerial.js'></script>
-<script src="../threex.geometricglowmesh.js"></script>
-<!-- include for threex.atmospherematerialdatgui -->
-<script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
-<script src="../threex.atmospherematerialdatgui.js"></script>
-
-
-<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
+<body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
+<div style='position: absolute; text-align: center; width: 100%;'>
+	On the <strong>left</strong>, a torus knot with normal material and its <strong>eroded</strong> geometry in wireframe.
+	<br/>
+	On the <strong>right</strong>, you see the same torus but with its <strong>dilated</strong> geometry in wireframe.
+</div>
+<script>
 	var renderer	= new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -17,45 +15,52 @@
 	var updateFcts	= [];
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100 );
-	camera.position.z = 3;
-
+	camera.position.z = 5;
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		add an object and make it move					//
+	//		add eroded geometry on the left				//
 	/////////////////////////////////////////////////////////////////////////////////
 
-	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32);
-	var material	= new THREE.MeshBasicMaterial({
-		color	: new THREE.Color('gray')
+	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3);
+	var material	= new THREE.MeshNormalMaterial({
+		opacity		: 0.9,
+		transparent	: true,
 	})
 	var mesh	= new THREE.Mesh( geometry, material );
-	// mesh.visible	= false
+	mesh.position.x	= -1.5
+	scene.add( mesh );
+
+	var erodedGeometry	= geometry.clone();
+	THREEx.dilateGeometry(erodedGeometry, -0.05)
+	var erodedMesh	= new THREE.Mesh( erodedGeometry, new THREE.MeshBasicMaterial({
+		wireframe	: true,
+		color		: 'black',
+	}))
+	erodedMesh.position.x	= -1.5
+	scene.add( erodedMesh );
+	
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add dilated geometry on the right				//
+	/////////////////////////////////////////////////////////////////////////////////
+
+	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3);
+	var material	= new THREE.MeshNormalMaterial({
+		opacity		: 0.9,
+		transparent	: true,
+	})
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.x	= 1.5
 	scene.add( mesh );
 	
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-
-	// create a glowMesh
-	var glowMesh	= new THREEx.GeometricGlowMesh(mesh)
-	mesh.add(glowMesh.object3d)
-
-	// example of customization of the default glowMesh
-	// glowMesh.insideMesh.material.uniforms.glowColor.value
-	// var insideUniforms	= glowMesh.insideMesh.material.uniforms
-	// insideUniforms.glowColor.value.set('hotpink')
-	// var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
-	// outsideUniforms.glowColor.value.set('hotpink')
-
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-	
-	// setup a datGUI for it
-	var datGUI	= new dat.GUI()
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
-
+	var dilatedGeometry	= geometry.clone();
+	THREEx.dilateGeometry(dilatedGeometry, 0.05)	
+	var dilatedMesh	= new THREE.Mesh( dilatedGeometry, new THREE.MeshBasicMaterial({
+		wireframe	: true,
+		color		: 'black',
+	}))
+	dilatedMesh.position.x	= 1.5
+	scene.add( dilatedMesh );
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//

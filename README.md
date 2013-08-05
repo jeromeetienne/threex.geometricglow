@@ -15,3 +15,14 @@ multiple advantages.
 var glowMesh	= new THREEx.GlowMesh(mesh);
 mesh.add(glowMesh)
 ```
+
+### Examples
+
+* [Geometric Glow Mesh](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html)
+examples show how to easily get a prebuilt glow mesh.
+* [Atmosphere Material](http://jeromeetienne.github.io/threex.geometricglow/examples/atmospherematerial.html)
+  shows how to use the atmosphere material
+* [Dilate Geometry](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html)
+  shows how to dilate/erode a geometry (and yes this is different than object.scale :)
+
+
