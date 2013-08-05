@@ -33,29 +33,32 @@
 	scene.add( mesh );
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
+	//		create the glowMesh						//
 	//////////////////////////////////////////////////////////////////////////////////
 
 	// create a glowMesh
 	var glowMesh	= new THREEx.GeometricGlowMesh(mesh)
 	mesh.add(glowMesh.object3d)
-
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		customize glow mesh if needed					//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	// example of customization of the default glowMesh
-	// glowMesh.insideMesh.material.uniforms.glowColor.value
-	// var insideUniforms	= glowMesh.insideMesh.material.uniforms
-	// insideUniforms.glowColor.value.set('hotpink')
-	// var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
-	// outsideUniforms.glowColor.value.set('hotpink')
+	var insideUniforms	= glowMesh.insideMesh.material.uniforms
+	insideUniforms.glowColor.value.set('hotpink')
+	var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
+	outsideUniforms.glowColor.value.set('hotpink')
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
+	//		add dat.GUI for fine tuning					//
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	// setup a datGUI for it
 	var datGUI	= new dat.GUI()
 	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
 	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
-
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//

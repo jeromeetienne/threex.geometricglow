@@ -11,10 +11,34 @@ multiple advantages.
     of the glowing object.
 
 
+## threex.geometricglowmesh.js
+
+Try this 
+[Geometric Glow Mesh](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html)
+and its
+[source](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html).
+It will shows you how to build a geometric glow mesh.
+How to create a glowMesh for a mesh ? just like this.
+
 ```
 var glowMesh	= new THREEx.GlowMesh(mesh);
 mesh.add(glowMesh)
 ```
+
+example of customization of the default glowMesh
+
+```
+var insideUniforms	= glowMesh.insideMesh.material.uniforms
+insideUniforms.glowColor.value.set('hotpink')
+var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
+outsideUniforms.glowColor.value.set('hotpink')
+```
+
+
+It depends on 
+[threex.atmospherematerial.js](https://github.com/jeromeetienne/threex.geometricglow#threex.atmospherematerial.js)
+and
+[threex.dilategeometry.js](https://github.com/jeromeetienne/threex.geometricglow#threex.dilategeometry.js).
 
 ### Examples
 
