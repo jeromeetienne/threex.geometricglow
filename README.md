@@ -18,6 +18,10 @@ Try this
 and its
 [source](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html).
 It will shows you how to build a geometric glow mesh.
+It depends on 
+[threex.atmospherematerial.js](https://github.com/jeromeetienne/threex.geometricglow#threex.atmospherematerial.js)
+and
+[threex.dilategeometry.js](https://github.com/jeromeetienne/threex.geometricglow#threex.dilategeometry.js).
 How to create a glowMesh for a mesh ? just like this.
 
 ```
@@ -34,11 +38,13 @@ var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
 outsideUniforms.glowColor.value.set('hotpink')
 ```
 
+to help fine tuning you may use dat.gui helpers.
 
-It depends on 
-[threex.atmospherematerial.js](https://github.com/jeromeetienne/threex.geometricglow#threex.atmospherematerial.js)
-and
-[threex.dilategeometry.js](https://github.com/jeromeetienne/threex.geometricglow#threex.dilategeometry.js).
+```
+var datGUI	= new dat.GUI()
+new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
+new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
+```
 
 ### Examples
 
