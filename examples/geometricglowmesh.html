@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<script src='../../../vendor/three.js/build/three.min.js'></script>
+<script src='vendor/three.js/build/three.min.js'></script>
 <script src='../threex.dilategeometry.js'></script>
 <script src='../threex.atmospherematerial.js'></script>
-<!-- include for threex.glowdatgui -->
-<script src='../../../vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
-<script src="../threex.atmospheredatgui.js"></script>
-
 <script src="../threex.geometricglowmesh.js"></script>
-
+<!-- include for threex.atmospherematerialdatgui -->
+<script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
+<script src="../threex.atmospherematerialdatgui.js"></script>
 <body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
 	var renderer	= new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -23,12 +21,7 @@
 	//		add an object and make it move					//
 	/////////////////////////////////////////////////////////////////////////////////
 
-	// var geometry	= new THREE.TorusGeometry(1-0.25, 0.25, 32, 32);
 	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32);
-	// var geometry	= new THREE.CubeGeometry(1,1,1, 5, 5, 5);
-	// var geometry	= new THREE.SphereGeometry(1, 32, 32)
-	// geometry.computeVertexNormals();
-	var material	= new THREE.MeshNormalMaterial();
 	var material	= new THREE.MeshBasicMaterial({
 		color	: new THREE.Color('gray')
 	})
@@ -36,20 +29,30 @@
 	// mesh.visible	= false
 	scene.add( mesh );
 	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+
 	// create a glowMesh
 	var glowMesh	= new THREEx.GeometricGlowMesh(mesh)
 	mesh.add(glowMesh.object3d)
 
-	// setup a datGUI for it
-	var datGUI	= new dat.GUI()
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
-	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
-
+	// example of customization of the default glowMesh
 	glowMesh.insideMesh.material.uniforms.glowColor.value
 	var insideUniforms	= glowMesh.insideMesh.material.uniforms
 	insideUniforms.glowColor.value.set('hotpink')
 	var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
 	outsideUniforms.glowColor.value.set('hotpink')
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	// setup a datGUI for it
+	var datGUI	= new dat.GUI()
+	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
+	new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//
