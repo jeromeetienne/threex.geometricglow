@@ -54,7 +54,7 @@
 	scene.add( mesh );
 	
 	var dilatedGeometry	= geometry.clone();
-	THREEx.dilateGeometry(dilatedGeometry, 0.05)	
+	THREEx.dilateGeometry(dilatedGeometry, 0.05)
 	var dilatedMesh	= new THREE.Mesh( dilatedGeometry, new THREE.MeshBasicMaterial({
 		wireframe	: true,
 		color		: 'black',

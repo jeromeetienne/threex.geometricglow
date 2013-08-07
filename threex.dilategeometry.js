@@ -1,5 +1,13 @@
+/**
+ * @namespace
+ */
 var THREEx	= THREEx || {}
 
+/**
+ * dilate a geometry inplace
+ * @param  {THREE.Geometry} geometry geometry to dilate
+ * @param  {Number} length   percent to dilate, use negative value to erode
+ */
 THREEx.dilateGeometry	= function(geometry, length){
 	// handle parameter polymorphism
 	console.assert(length !== undefined);

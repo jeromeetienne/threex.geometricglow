@@ -10,6 +10,17 @@ multiple advantages.
   * screenspace glow may have a single glow level no matter the depth
     of the glowing object.
 
+It is released under MIT License.
+
+### Examples
+
+* [Geometric Glow Mesh](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html)
+examples show how to easily get a prebuilt glow mesh.
+* [Atmosphere Material](http://jeromeetienne.github.io/threex.geometricglow/examples/atmospherematerial.html)
+  shows how to use the atmosphere material
+* [Dilate Geometry](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html)
+  shows how to dilate/erode a geometry (and yes this is different than object.scale :)
+
 
 ## threex.geometricglowmesh.js
 
@@ -24,14 +35,14 @@ and
 [threex.dilategeometry.js](https://github.com/jeromeetienne/threex.geometricglow#threex.dilategeometry.js).
 How to create a glowMesh for a mesh ? just like this.
 
-```
+```javascript
 var glowMesh	= new THREEx.GlowMesh(mesh);
 mesh.add(glowMesh)
 ```
 
 example of customization of the default glowMesh
 
-```
+```javascript
 var insideUniforms	= glowMesh.insideMesh.material.uniforms
 insideUniforms.glowColor.value.set('hotpink')
 var outsideUniforms	= glowMesh.outsideMesh.material.uniforms
@@ -40,19 +51,49 @@ outsideUniforms.glowColor.value.set('hotpink')
 
 to help fine tuning you may use dat.gui helpers.
 
-```
+```javascript
 var datGUI	= new dat.GUI()
 new THREEx.addAtmosphereMaterial2DatGui(glowMesh.insideMesh.material, datGUI)	
 new THREEx.addAtmosphereMaterial2DatGui(glowMesh.outsideMesh.material, datGUI)	
 ```
 
-### Examples
+## threex.dilategeometry.js
 
-* [Geometric Glow Mesh](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html)
-examples show how to easily get a prebuilt glow mesh.
-* [Atmosphere Material](http://jeromeetienne.github.io/threex.geometricglow/examples/atmospherematerial.html)
-  shows how to use the atmosphere material
-* [Dilate Geometry](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html)
-  shows how to dilate/erode a geometry (and yes this is different than object.scale :)
+It dilates a geometry along the vertex normals. 
+Note that it isnt to be confused with ```object3d.scale```.
+Scale changes the size but independantly of the vertex normal.
+Try this
+[example](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html)
+and its
+[source](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html).
+It shows how to dilate/erode a geometry.
+To dilate a geometry by 5%, just do
+
+```javascript
+THREEx.dilateGeometry(geometry, 0.05)
+```
+
+## threex.atmospherematerial.js
+
+It provides a material which shine on border, like the earth atmostphere 
+when you look at it from space. To create it, use the following line.
+
+```javascript
+var material	= THREEx.createAtmosphereMaterial()
+```
+
+It is a ```THREE.ShaderMaterial``` that you can tune thru its uniforms.
+Here is a possible customisation.
+
+```javascript
+material.uniforms.glowColor.value	= new THREE.Color('cyan')
+material.uniforms.coeficient.value	= 1.1
+material.uniforms.power.value		= 0.7
 
 
+For fine tuning, you can use datGUI
+
+```javascript
+var datGUI	= new dat.GUI()
+new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+```
