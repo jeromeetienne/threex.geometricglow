@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <script src='vendor/three.js/build/three.min.js'></script>
+<script src='vendor/three.js/examples/js/modifiers/SubdivisionModifier.js'></script>
+
 <script src='../threex.dilategeometry.js'></script>
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
 <div style='position: absolute; text-align: center; width: 100%;'>
@@ -21,7 +23,17 @@
 	//		add eroded geometry on the left				//
 	/////////////////////////////////////////////////////////////////////////////////
 
+
 	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3);
+	// var geometry	= new THREE.CubeGeometry(1,1,1, 10, 10, 10);
+	// // mergeVertices(); is run in case of duplicated vertices
+	// // geometry.mergeVertices();
+	// // geometry.computeCentroids();
+	// // geometry.computeFaceNormals();
+	// // geometry.computeVertexNormals();
+	// var modifier	= new THREE.SubdivisionModifier(2)
+	// modifier.modify(geometry)
+
 	var material	= new THREE.MeshNormalMaterial({
 		opacity		: 0.9,
 		transparent	: true,
@@ -31,20 +43,19 @@
 	scene.add( mesh );
 
 	var erodedGeometry	= geometry.clone();
-	THREEx.dilateGeometry(erodedGeometry, -0.05)
+	THREEx.dilateGeometry(erodedGeometry, -0.1)
 	var erodedMesh	= new THREE.Mesh( erodedGeometry, new THREE.MeshBasicMaterial({
 		wireframe	: true,
 		color		: 'black',
 	}))
-	erodedMesh.position.x	= -1.5
-	scene.add( erodedMesh );
+	mesh.add( erodedMesh );
 	
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add dilated geometry on the right				//
 	/////////////////////////////////////////////////////////////////////////////////
-
 	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3);
+	// var geometry	= new THREE.CubeGeometry(1,1,1, 10, 10, 10);
 	var material	= new THREE.MeshNormalMaterial({
 		opacity		: 0.9,
 		transparent	: true,
@@ -54,7 +65,7 @@
 	scene.add( mesh );
 	
 	var dilatedGeometry	= geometry.clone();
-	THREEx.dilateGeometry(dilatedGeometry, 0.05)
+	THREEx.dilateGeometry(dilatedGeometry, 0.1)
 	var dilatedMesh	= new THREE.Mesh( dilatedGeometry, new THREE.MeshBasicMaterial({
 		wireframe	: true,
 		color		: 'black',

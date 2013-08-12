@@ -8,6 +8,7 @@ THREEx.createAtmosphereMaterial	= function(){
 	var vertexShader	= [
 		'uniform float	coeficient;',
 		'uniform float	power;',
+		'uniform vec3	viewVector;',
 
 		'varying float	intensity;',
 
@@ -15,22 +16,38 @@ THREEx.createAtmosphereMaterial	= function(){
 		'	// compute intensity',
 		'	vec3 vNormal	= normalize(normalMatrix * normal);',
 
+		// '	vec3 vNormel	= normalize( normalMatrix * cameraPosition );',
+		// '	intensity	= pow( coeficient - dot(vNormal, vNormel), power );',
+
 		// '	vec3 camPosition= normalize(normalMatrix * cameraPosition);',
 		// '	intensity	= pow( coeficient - dot(vNormal, camPosition), power );',
 
-		'	intensity	= pow( coeficient - dot(vNormal, vec3(0.0,0.0,1.0)), power );',
+		// '	intensity	= pow( coeficient - dot(vNormal, normalize(viewVector)), power );',
+
+
+		'	vec3 vNormel	= normalMatrix * cameraPosition;',
+		'	vNormel		= vNormel - (modelViewMatrix * vec4(position, 1.0 )).xyz;',
+		'	vNormel		= normalize(vNormel);',
+		'	intensity	= pow(coeficient - dot(vNormal, vNormel), power);',
+
+
 		'	// set gl_Position',
-		'	gl_Position	= projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+		'	gl_Position	= projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
 		'}',
-	].join('\n')
+
+		].join('\n')
 	var fragmentShader	= [
 		'uniform vec3	glowColor;',
 
 		'varying float	intensity;',
 
 		'void main(){',
-		'	gl_FragColor	= vec4(glowColor*intensity, intensity);',
+		// '	gl_FragColor	= vec4(glowColor*intensity, intensity);',
+		'	gl_FragColor	= vec4(glowColor, intensity);',
+		// '	gl_FragColor	= vec4(vec3(intensity), 1.0);',
+		// '	gl_FragColor	= vec4(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2])), 1.0);',
 		// '	gl_FragColor	= vec4(glowColor, intensity);',
+		// '	gl_FragColor	= vec4(normalize(cameraPosition2), 1.0);',
 		'}',
 	].join('\n')
 
@@ -50,10 +67,13 @@ THREEx.createAtmosphereMaterial	= function(){
 				type	: "c",
 				value	: new THREE.Color('pink')
 			},
+			viewVector	: {
+				type	: "v3",
+				value	: new THREE.Vector3(0,0,1)
+			},
 		},
 		vertexShader	: vertexShader,
 		fragmentShader	: fragmentShader,
-		// side		: THREE.FrontSide,
 		blending	: THREE.AdditiveBlending,
 		transparent	: true,
 		depthWrite	: false,

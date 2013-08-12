@@ -9,8 +9,6 @@ var THREEx	= THREEx || {}
  * @param  {Number} length   percent to dilate, use negative value to erode
  */
 THREEx.dilateGeometry	= function(geometry, length){
-	// handle parameter polymorphism
-	console.assert(length !== undefined);
 	// gather vertexNormals from geometry.faces
 	var vertexNormals	= new Array(geometry.vertices.length);
 	geometry.faces.forEach(function(face){

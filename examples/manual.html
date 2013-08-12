@@ -14,7 +14,7 @@
 	var updateFcts	= [];
 	var scene	= new THREE.Scene();
 	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100 );
-	camera.position.z = 3;
+	camera.position.z = 5;
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add an object and make it move					//
@@ -24,16 +24,44 @@
 	var glowColor	= new THREE.Color('cyan')
 
 	var geometry	= new THREE.TorusGeometry(1-0.25, 0.25, 32, 32);
-	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32);
+	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32*3);
 	// var geometry	= new THREE.CubeGeometry(1,1,1, 5, 5, 5);
 	// var geometry	= new THREE.SphereGeometry(1, 32, 32)
+
+	// mergeVertices(); is run in case of duplicated vertices
+	geometry.mergeVertices();
+	geometry.computeCentroids();
+	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
+
+	var material	= new THREE.MeshBasicMaterial({
+		color	: 'white'
+	});
 	var material	= new THREE.MeshNormalMaterial();
 	var mesh	= new THREE.Mesh( geometry, material );
 	// mesh.visible	= false
+	mesh.add(new THREE.AxisHelper(2))
 	scene.add( mesh );
 	
 	
+	// var helper	= new THREE.FaceNormalsHelper(mesh, 0.1, 'blue')
+	// mesh.add(helper)
+
+	// var helper	= new THREE.VertexNormalsHelper(mesh, 0.2, 'red')
+	// mesh.add(helper)
+
+	updateFcts.push(function(delta, now){
+		var angle	= 0.1 * now * Math.PI*2
+		mesh.position.x	= Math.cos(angle)*3
+	})
+
+	updateFcts.push(function(delta, now){
+		var angle	= 0.1 * now * Math.PI*2
+		// mesh.rotation.y	+= 0.1 * delta * Math.PI*2
+	})
+	// mesh.rotation.y	= Math.PI
+
+
 	var geometry	= mesh.geometry.clone()
 	THREEx.dilateGeometry(geometry, 0.001)
 	var material	= THREEx.createAtmosphereMaterial()
@@ -42,20 +70,19 @@
 	material.uniforms.power.value		= 0.7
 	// material.side	= THREE.DoubleSide
 	var meshGlowIn	= new THREE.Mesh(geometry, material );
-	scene.add( meshGlowIn );
-
+	mesh.add( meshGlowIn );
 	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
 	var geometry	= mesh.geometry.clone()
-	// THREEx.dilateGeometry(geometry, 0.1)
+	// THREEx.dilateGeometry(geometry, 0.2)
 	var material	= THREEx.createAtmosphereMaterial()
 	material.uniforms.glowColor.value	= glowColor
 	material.uniforms.coeficient.value	= 0.2
 	material.uniforms.power.value		= 2.0
-	material.side	= THREE.BackSide
+	material.side				= THREE.BackSide
 	var meshGlowOut	= new THREE.Mesh( geometry, material );
 	meshGlowOut.scale.multiplyScalar(1.2)
-	scene.add( meshGlowOut );
+	mesh.add( meshGlowOut );
 
 	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
@@ -68,9 +95,9 @@
 		mouse.y	= (event.clientY / window.innerHeight) - 0.5
 	}, false)
 	updateFcts.push(function(delta, now){
-		camera.position.x += (mouse.x*25 - camera.position.x) * (delta*3)
-		camera.position.y += (mouse.y*25 - camera.position.y) * (delta*3)
-		camera.lookAt( scene.position )
+		// camera.position.x += (mouse.x*25 - camera.position.x) * (delta*3)
+		// camera.position.y += (mouse.y*25 - camera.position.y) * (delta*3)
+		// camera.lookAt( scene.position )
 	})
 
 

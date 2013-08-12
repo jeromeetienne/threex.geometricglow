@@ -21,6 +21,12 @@ examples show how to easily get a prebuilt glow mesh.
 * [Dilate Geometry](http://jeromeetienne.github.io/threex.geometricglow/examples/dilategeometry.html)
   shows how to dilate/erode a geometry (and yes this is different than object.scale :)
 
+## bugs
+
+* dilation fails: seems to fails on eroded cube
+* formula for dot()
+  * fix viewVector is false... better to take vector from vertex to camera
+  
 
 ## threex.geometricglowmesh.js
 

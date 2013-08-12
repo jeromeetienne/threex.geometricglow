@@ -11,11 +11,12 @@ THREEx.GeometricGlowMesh	= function(mesh){
 	material.uniforms.power.value		= 0.7
 	// material.side	= THREE.DoubleSide
 	var insideMesh	= new THREE.Mesh(geometry, material );
+	// insideMesh.scale.multiplyScalar(1.01)
 	object3d.add( insideMesh );
 
 
 	var geometry	= mesh.geometry.clone()
-	THREEx.dilateGeometry(geometry, 0.1)
+	// THREEx.dilateGeometry(geometry, 0.2)
 	var material	= THREEx.createAtmosphereMaterial()
 	material.uniforms.glowColor.value	= new THREE.Color('cyan')
 	material.uniforms.coeficient.value	= 0.2
