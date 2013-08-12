@@ -8,7 +8,7 @@
 <script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
 <script src="../threex.atmospherematerialdatgui.js"></script>
 
-<body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'><script>
+<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
 	var renderer	= new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
@@ -23,31 +23,10 @@
 	//////////////////////////////////////////////////////////////////////////////////
 
 	var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32);
-	var geometry	= new THREE.CubeGeometry(1,1,1, 3, 3, 3);
-
-	geometry.computeVertexNormals();
 	var material	= new THREE.MeshNormalMaterial();
 	var mesh	= new THREE.Mesh( geometry, material );
 	// mesh.visible	= false
 	scene.add( mesh );
-
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-			
-	// var geometry	= mesh.geometry.clone()	
-	// var modifier	= new THREE.SubdivisionModifier(1)
-	// // mergeVertices(); is run in case of duplicated vertices
-	// geometry.mergeVertices();
-	// geometry.computeCentroids();
-	// geometry.computeFaceNormals();
-	// geometry.computeVertexNormals();
-	// modifier.modify(geometry)
-	// var erodedMesh	= new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({
-	// 	wireframe	: true,
-	// 	color		: 'black',
-	// }))
-	// scene.add( erodedMesh );
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		put the hallo around						//
@@ -55,36 +34,19 @@
 
 	// create the mesh for the halo with AtmosphereMaterial
 	var geometry	= mesh.geometry.clone()	
-
-	var modifier	= new THREE.SubdivisionModifier(2)
-	// mergeVertices(); is run in case of duplicated vertices
-	// geometry.mergeVertices();
-	// geometry.computeCentroids();
-	// geometry.computeFaceNormals();
-	// geometry.computeVertexNormals();
-	modifier.modify(geometry)
-
-	THREEx.dilateGeometry(geometry, 0.25)
+	THREEx.dilateGeometry(geometry, 0.15)
 	var material	= THREEx.createAtmosphereMaterial()
-	material.side	= THREE.BackSide
-	
-	var material	= new THREE.MeshBasicMaterial({
-		wireframe	: true,
-		color		: 'black',
-	})
-	
 	var meshHalo	= new THREE.Mesh(geometry, material );	
-	// meshHalo.
 	scene.add( meshHalo );
 
-	// // possible customisation of AtmosphereMaterial
-	// material.uniforms.glowColor.value	= new THREE.Color('cyan')
-	// material.uniforms.coeficient.value	= 0.2
-	// material.uniforms.power.value		= 2.0
+	// possible customisation of AtmosphereMaterial
+	material.uniforms.glowColor.value	= new THREE.Color('cyan')
+	material.uniforms.coeficient.value	= 1.1
+	material.uniforms.power.value		= 1.4
 	
-	// // here is how to setup a datGUI for fine tuning
-	// var datGUI	= new dat.GUI()
-	// new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+	// here is how to setup a datGUI for fine tuning
+	var datGUI	= new dat.GUI()
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//

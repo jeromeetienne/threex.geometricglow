@@ -6,29 +6,15 @@ var THREEx = THREEx || {}
  */
 THREEx.createAtmosphereMaterial	= function(){
 	var vertexShader	= [
-		'uniform float	coeficient;',
-		'uniform float	power;',
-		'uniform vec3	viewVector;',
+		'varying vec3	vVertexWorldPosition;',
+		'varying vec3	vVertexNormal;',
 
-		'varying float	intensity;',
+		'varying vec4	vFragColor;',
 
 		'void main(){',
-		'	// compute intensity',
-		'	vec3 vNormal	= normalize(normalMatrix * normal);',
+		'	vVertexNormal	= normalize(normalMatrix * normal);',
 
-		// '	vec3 vNormel	= normalize( normalMatrix * cameraPosition );',
-		// '	intensity	= pow( coeficient - dot(vNormal, vNormel), power );',
-
-		// '	vec3 camPosition= normalize(normalMatrix * cameraPosition);',
-		// '	intensity	= pow( coeficient - dot(vNormal, camPosition), power );',
-
-		// '	intensity	= pow( coeficient - dot(vNormal, normalize(viewVector)), power );',
-
-
-		'	vec3 vertex2Cam	= normalMatrix * cameraPosition;',
-		'	vertex2Cam	= vertex2Cam - (modelViewMatrix * vec4(position, 1.0 )).xyz;',
-		'	vertex2Cam	= normalize(vertex2Cam);',
-		'	intensity	= pow(coeficient - dot(vNormal, vertex2Cam), power);',
+		'	vVertexWorldPosition	= (modelMatrix * vec4(position, 1.0)).xyz;',
 
 		'	// set gl_Position',
 		'	gl_Position	= projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
@@ -37,17 +23,20 @@ THREEx.createAtmosphereMaterial	= function(){
 		].join('\n')
 	var fragmentShader	= [
 		'uniform vec3	glowColor;',
+		'uniform float	coeficient;',
+		'uniform float	power;',
 
-		'varying float	intensity;',
+		'varying vec3	vVertexNormal;',
+		'varying vec3	vVertexWorldPosition;',
+
+		'varying vec4	vFragColor;',
 
 		'void main(){',
-		'	gl_FragColor	= vec4(glowColor, intensity);',
-		// '	gl_FragColor	= vec4(glowColor*intensity, intensity);',
-
-		// '	gl_FragColor	= vec4(vec3(intensity), 1.0);',
-		// '	gl_FragColor	= vec4(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2])), 1.0);',
-		// '	gl_FragColor	= vec4(glowColor, intensity);',
-		// '	gl_FragColor	= vec4(normalize(cameraPosition2), 1.0);',
+		'	vec3 worldCameraToVertex= vVertexWorldPosition - cameraPosition;',
+		'	vec3 viewCameraToVertex	= (viewMatrix * vec4(worldCameraToVertex, 0.0)).xyz;',
+		'	viewCameraToVertex	= normalize(viewCameraToVertex);',
+		'	float intensity		= pow(coeficient + dot(vVertexNormal, viewCameraToVertex), power);',
+		'	gl_FragColor		= vec4(glowColor, intensity);',
 		'}',
 	].join('\n')
 
@@ -66,10 +55,6 @@ THREEx.createAtmosphereMaterial	= function(){
 			glowColor	: {
 				type	: "c",
 				value	: new THREE.Color('pink')
-			},
-			viewVector	: {
-				type	: "v3",
-				value	: new THREE.Vector3(0,0,1)
 			},
 		},
 		vertexShader	: vertexShader,
