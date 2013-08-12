@@ -12,6 +12,15 @@ multiple advantages.
 
 It is released under MIT License.
 
+### Notes
+
+* normalMatrix is in view coordinates
+  * deduced from https://github.com/mrdoob/three.js/blob/master/src/renderers/WebGLRenderer.js#L5668
+* cameraPosition is in world coordinates
+  * deduced from https://github.com/mrdoob/three.js/blob/master/src/renderers/WebGLRenderer.js#L5165
+* modelMatrix is object3dmatrixWorld
+
+
 ### Examples
 
 * [Geometric Glow Mesh](http://jeromeetienne.github.io/threex.geometricglow/examples/geometricglowmesh.html)

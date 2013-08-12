@@ -25,11 +25,10 @@ THREEx.createAtmosphereMaterial	= function(){
 		// '	intensity	= pow( coeficient - dot(vNormal, normalize(viewVector)), power );',
 
 
-		'	vec3 vNormel	= normalMatrix * cameraPosition;',
-		'	vNormel		= vNormel - (modelViewMatrix * vec4(position, 1.0 )).xyz;',
-		'	vNormel		= normalize(vNormel);',
-		'	intensity	= pow(coeficient - dot(vNormal, vNormel), power);',
-
+		'	vec3 vertex2Cam	= normalMatrix * cameraPosition;',
+		'	vertex2Cam	= vertex2Cam - (modelViewMatrix * vec4(position, 1.0 )).xyz;',
+		'	vertex2Cam	= normalize(vertex2Cam);',
+		'	intensity	= pow(coeficient - dot(vNormal, vertex2Cam), power);',
 
 		'	// set gl_Position',
 		'	gl_Position	= projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
@@ -42,8 +41,9 @@ THREEx.createAtmosphereMaterial	= function(){
 		'varying float	intensity;',
 
 		'void main(){',
-		// '	gl_FragColor	= vec4(glowColor*intensity, intensity);',
 		'	gl_FragColor	= vec4(glowColor, intensity);',
+		// '	gl_FragColor	= vec4(glowColor*intensity, intensity);',
+
 		// '	gl_FragColor	= vec4(vec3(intensity), 1.0);',
 		// '	gl_FragColor	= vec4(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2])), 1.0);',
 		// '	gl_FragColor	= vec4(glowColor, intensity);',
