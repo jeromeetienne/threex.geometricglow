@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<script src='vendor/three.js/build/three.min.js'></script>
+<script src='../threex.dilategeometry.js'></script>
+<!-- <script src='../threex.atmospherematerial.js'></script> -->
+<!-- include for threex.glowdatgui -->
+<script src='vendor/three.js/examples/js/libs/dat.gui.min.js'></script>
+<script src="../threex.atmospherematerialdatgui.js"></script>
+
+<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
+	var renderer	= new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	var updateFcts	= [];
+	var scene	= new THREE.Scene();
+	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100 );
+	camera.position.z = 3;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+var THREEx = THREEx || {}
+
+/**
+ * from http://stemkoski.blogspot.fr/2013/07/shaders-in-threejs-glow-and-halo.html
+ * @return {[type]} [description]
+ */
+THREEx.createAtmosphereMaterial	= function(){
+	var vertexShader	= [
+		'uniform float	coeficient;',
+		'uniform float	power;',
+		'uniform vec3	cameraWorldPosition;',
+
+		'varying vec3	vVertexWorldPosition;',
+		'varying vec3	vNormal;',
+
+		'varying float	intensity;',
+		'varying vec4	vFragColor;',
+
+		'void main(){',
+		'	vNormal	= normalize(normalMatrix * normal);',
+
+		// 	THREE.ShaderChunk[ "defaultnormal_vertex" ],
+		// '	vNormal	= transformedNormal;',
+
+		
+		// '	vFragColor	= vec4(transformedNormal, 1.0);',
+
+		'	vVertexWorldPosition	= (modelMatrix * vec4(position, 1.0)).xyz;',
+
+		'	// set gl_Position',
+		'	gl_Position	= projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+		'}',
+
+		].join('\n')
+	var fragmentShader	= [
+		'uniform float	coeficient;',
+		'uniform float	power;',
+
+		'varying vec3	vNormal;',
+
+		'uniform vec3	glowColor;',
+		'varying vec4	vFragColor;',
+		'varying vec3	vVertexWorldPosition;',
+
+		'void main(){',
+		'	vec3 worldCameraToVertex= normalize( vVertexWorldPosition - cameraPosition );',
+		'	vec3 viewCameraToVertex	= (viewMatrix * vec4(worldCameraToVertex, 1.0)).xyz;',
+		'	viewCameraToVertex	= normalize(viewCameraToVertex);',
+		'	float intensity		= pow(coeficient + dot(vNormal, viewCameraToVertex), power);',
+		'	gl_FragColor		= vec4(glowColor*intensity, intensity);',
+		
+		// '	gl_FragColor	= vec4(glowColor, intensity);',
+		// '	gl_FragColor	= vec4(glowColor*intensity, intensity);',
+		// '	gl_FragColor	= vec4(glowColor*intensity, 1.0);',
+
+		// '	gl_FragColor	= vFragColor;',
+		// '	gl_FragColor	= vec4(0.5+0.5*normalize(cameraPosition), 1.0);',
+		// '	gl_FragColor	= vec4(0.5+0.5*worldCameraToVertex, 1.0);',
+		// '	gl_FragColor	= vec4(0.5+0.5*viewCameraToVertex, 1.0);',
+		// '	gl_FragColor	= vec4(0.5+0.5*normalize(vVertexWorldPosition), 1.0);',
+
+		// '	gl_FragColor	= vec4(vec3(intensity), 1.0);',
+		// '	gl_FragColor	= vec4(length(normalMatrix[0]), length(normalMatrix[1]), length(normalMatrix[2])), 1.0);',
+		// '	gl_FragColor	= vec4(glowColor, intensity);',
+		// '	gl_FragColor	= vec4(normalize(cameraPosition2), 1.0);',
+		'}',
+	].join('\n')
+
+	// create custom material from the shader code above
+	//   that is within specially labeled script tags
+	var material	= new THREE.ShaderMaterial({
+		uniforms: { 
+			coeficient	: {
+				type	: "f", 
+				value	: 1.0
+			},
+			power		: {
+				type	: "f",
+				value	: 2
+			},
+			glowColor	: {
+				type	: "c",
+				value	: new THREE.Color('pink')
+			},
+			cameraWorldPosition	: {
+				type	: "v3",
+				value	: new THREE.Vector3(0,0,1)
+			},
+		},
+		vertexShader	: vertexShader,
+		fragmentShader	: fragmentShader,
+		blending	: THREE.AdditiveBlending,
+		transparent	: true,
+		depthWrite	: false,
+	});
+	return material
+}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add an object and make it move					//
+	/////////////////////////////////////////////////////////////////////////////////
+
+	var datGUI	= new dat.GUI()
+	var glowColor	= new THREE.Color('cyan')
+
+	var geometry	= new THREE.TorusGeometry(1-0.25, 0.25, 32, 32);
+	// var geometry	= new THREE.TorusKnotGeometry(1-0.25, 0.25, 32*3, 32*3);
+	// var geometry	= new THREE.CubeGeometry(1,1,1, 5, 5, 5);
+	// var geometry	= new THREE.SphereGeometry(4, 32, 32)
+
+	// mergeVertices(); is run in case of duplicated vertices
+	geometry.mergeVertices();
+	geometry.computeCentroids();
+	geometry.computeFaceNormals();
+	geometry.computeVertexNormals();
+
+	// var material	= new THREE.MeshBasicMaterial({
+	// 	color		: 'black',
+	// 	wireframe	: true
+	// });
+	// var material	= new THREE.MeshBasicMaterial({
+	// 	color		: 'gray',
+	// });
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	// mesh.visible	= false
+	mesh.add(new THREE.AxisHelper(2))
+	scene.add( mesh );
+	
+	
+	// var helper	= new THREE.FaceNormalsHelper(mesh, 0.1, 'blue')
+	// mesh.add(helper)
+
+	// var helper	= new THREE.VertexNormalsHelper(mesh, 0.2, 'red')
+	// mesh.add(helper)
+
+	updateFcts.push(function(delta, now){
+		var angle	= 0.1 * now * Math.PI*2
+		// mesh.position.x	= Math.cos(angle)*2
+		// mesh.position.z	= Math.sin(angle)*2
+	})
+
+	updateFcts.push(function(delta, now){
+		mesh.rotation.y	+= 0.1 * delta * Math.PI*2
+	})
+	// mesh.rotation.y	= Math.PI
+
+
+	var geometry	= mesh.geometry.clone()
+	THREEx.dilateGeometry(geometry, 0.001)
+	var material	= THREEx.createAtmosphereMaterial()
+	material.uniforms.glowColor.value	= glowColor
+	material.uniforms.coeficient.value	= 1.4
+	material.uniforms.power.value		= 5
+	var meshGlowIn	= new THREE.Mesh(geometry, material );
+	meshGlowIn.position	= mesh.position
+	meshGlowIn.quaternion	= mesh.quaternion
+	scene.add( meshGlowIn );
+
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+
+	var geometry	= mesh.geometry.clone()
+	// // THREEx.dilateGeometry(geometry, 0.001)
+	var material	= THREEx.createAtmosphereMaterial()
+	material.uniforms.glowColor.value	= glowColor
+	material.uniforms.coeficient.value	= 0.2
+	material.uniforms.power.value		= 2
+	material.side		= THREE.BackSide
+	var meshGlowOut		= new THREE.Mesh( geometry, material );
+	meshGlowOut.position	= mesh.position
+	meshGlowOut.quaternion	= mesh.quaternion
+	meshGlowOut.scale.multiplyScalar(1.1)
+	scene.add( meshGlowOut );
+
+	// mesh.add(new THREE.VertexNormalsHelper(meshGlowOut, 0.2, 'red'))
+
+	new THREEx.addAtmosphereMaterial2DatGui(material, datGUI)
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		Camera Controls							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var mouse	= {x : 0, y : 0}
+	document.addEventListener('mousemove', function(event){
+		mouse.x	= (event.clientX / window.innerWidth ) - 0.5
+		mouse.y	= (event.clientY / window.innerHeight) - 0.5
+	}, false)
+	updateFcts.push(function(delta, now){
+		// camera.position.x += (mouse.x*25 - camera.position.x) * (delta*3)
+		// camera.position.y += (mouse.y*25 - camera.position.y) * (delta*3)
+		// camera.lookAt( scene.position )
+	})
+
+	// // put camera on the right side looking in the center
+	// camera.position.x	= 3
+	// camera.position.z	= 0
+	// camera.lookAt( scene.position )
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		render the scene						//
+	//////////////////////////////////////////////////////////////////////////////////
+	updateFcts.push(function(){
+		renderer.render( scene, camera );		
+	})
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		loop runner							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var lastTimeMsec= null
+	requestAnimationFrame(function animate(nowMsec){
+		// keep looping
+		requestAnimationFrame( animate );
+		// measure time
+		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
+		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
+		lastTimeMsec	= nowMsec
+		// call each update function
+		updateFcts.forEach(function(updateFn){
+			updateFn(deltaMsec/1000, nowMsec/1000)
+		})
+	})
+</script></body>
