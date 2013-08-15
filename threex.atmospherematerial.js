@@ -59,7 +59,7 @@ THREEx.createAtmosphereMaterial	= function(){
 		},
 		vertexShader	: vertexShader,
 		fragmentShader	: fragmentShader,
-		blending	: THREE.AdditiveBlending,
+		//blending	: THREE.AdditiveBlending,
 		transparent	: true,
 		depthWrite	: false,
 	});
