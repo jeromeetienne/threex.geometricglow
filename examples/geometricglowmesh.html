@@ -72,9 +72,9 @@
 		mouse.y	= (event.clientY / window.innerHeight) - 0.5
 	}, false)
 	updateFcts.push(function(delta, now){
-		// camera.position.x += (mouse.x*50 - camera.position.x) * (delta*3)
-		// camera.position.y += (mouse.y*50 - camera.position.y) * (delta*3)
-		// camera.lookAt( scene.position )
+		camera.position.x += (mouse.x*10 - camera.position.x) * (delta*3)
+		camera.position.y += (mouse.y*10 - camera.position.y) * (delta*3)
+		camera.lookAt( scene.position )
 	})
 
 
